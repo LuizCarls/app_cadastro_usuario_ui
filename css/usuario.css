@@ -1,0 +1,12 @@
+.container {
+    max-width: 1400px;
+    margin-top: 50px;
+}
+
+.email-column {
+    width: 15%;
+    word-wrap: break-word; /* Quebra linha no email se necessário */
+}
+.nome-column {
+    width: 15%;
+}
