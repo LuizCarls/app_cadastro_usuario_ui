@@ -9,6 +9,7 @@ $(document).ready(function()
     var user = JSON.parse(localStorage.getItem('usuarioParaEditar'));
     // Preenche o formulário com os dados do usuário
     $('#nome').val(user.nome);
+    $('#cpf').val(user.cpf);
     $('#email').val(user.email);
     $('#cep').val(user.cep);
     $('#rua').val(user.rua);

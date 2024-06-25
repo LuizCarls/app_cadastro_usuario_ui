@@ -5,6 +5,7 @@ var tableBody = $('#usuariosTableBody');
 users.forEach(function(user, index) {
     var row = '<tr>' +
         '<td class="nome-column">' + user.nome + '</td>' +
+        '<td style="width: 5%;">' + user.cpf + '</td>' +
         '<td class="email-column">' + user.email + '</td>' +
         '<td>' + user.rua + '</td>' +
         '<td>' + user.numero + '</td>' +
@@ -19,6 +20,21 @@ users.forEach(function(user, index) {
         '</tr>';
     tableBody.append(row);
 });
+
+function filtrarUsuarios() {
+    const nomeFiltro = $('#nomeFiltro').val().toLowerCase();
+    const cpfFiltro = $('#cpfFiltro').val();
+
+    $('#usuariosTableBody tr').filter(function() {
+        const nome = $(this).find('td').eq(0).text().toLowerCase();
+        const cpf = $(this).find('td').eq(1).text();
+        $(this).toggle(nome.includes(nomeFiltro) && cpf.includes(cpfFiltro));
+    });
+}
+
+// Adiciona evento de input aos campos de filtro
+$('#nomeFiltro').on('input', filtrarUsuarios);
+$('#cpfFiltro').on('input', filtrarUsuarios);
 
 function editarUsuario(index) {
     // Lógica para editar o usuário no índice fornecido
