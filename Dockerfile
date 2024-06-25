@@ -1,13 +1,16 @@
- # Use a small, efficient HTTP server image
+ # Servidor
  FROM nginx:alpine
 
- # Remove default nginx website
+ # Remover site nginx padrão
  RUN rm -rf /usr/share/nginx/html/*
 
- # Copy the static HTML, CSS, and JavaScript files to the default Nginx web root directory
+ # Copia os arquivos estáticos HTML, CSS e JavaScript para o diretório raiz da web Nginx padrão
  COPY views /usr/share/nginx/html/views
  COPY css /usr/share/nginx/html/css
  COPY js /usr/share/nginx/html/js
 
- # Expose port 80 to allow outside access
+ # O Nginx expõe a porta 80 por padrão, onde o servidor irá executar.
  EXPOSE 80
+
+ # Comando para incluir o servidor web Nginx em primeiro plano
+ CMD [ "nginx", "-g", "daemon off" ]
