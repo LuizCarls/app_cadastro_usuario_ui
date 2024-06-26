@@ -11,6 +11,3 @@
 
  # O Nginx expõe a porta 80 por padrão, onde o servidor irá executar.
  EXPOSE 80
-
- # Comando para incluir o servidor web Nginx em primeiro plano
- CMD [ "nginx", "-g", "daemon off" ]
