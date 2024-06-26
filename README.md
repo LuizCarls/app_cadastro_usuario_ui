@@ -57,7 +57,7 @@ Uma vez executando, para acessar a API, basta abrir o [http://localhost:8080/vie
 >Subistituindo o `CONTAINER ID` pelo ID do conatiner
 >
 >
-> Caso queira **destruir um conatiner**, basta executar o comando:
+> Caso queira **destruir um container**, basta executar o comando:
 >```
 >$ docker rm <CONTAINER ID>
 >```
