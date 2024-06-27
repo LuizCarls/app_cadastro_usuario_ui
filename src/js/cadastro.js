@@ -1,33 +1,41 @@
-$(document).ready(function() 
-{ 
-  // Obter o índice do usuário a partir dos parâmetros de consulta
-  var params = getQueryParams();    
-  if (params.index) {
-    $('#btnCadastrar').hide();
-    $('#btnAtualizar').show();      
+/*
+  --------------------------------------------------------------------------------------
+  Função para preencher os campos que serão editados
+  --------------------------------------------------------------------------------------
+*/
 
-    var user = JSON.parse(localStorage.getItem('usuarioParaEditar'));
-    // Preenche o formulário com os dados do usuário
-    $('#nome').val(user.nome);
-    $('#cpf').val(user.cpf);
-    $('#email').val(user.email);
-    $('#cep').val(user.cep);
-    $('#rua').val(user.rua);
-    $('#numero').val(user.numero);
-    $('#complemento').val(user.complemento);
-    $('#cidade').val(user.cidade);
-    $('#estado').val(user.estado);
-    
-    // Limpa o localStorage
-    localStorage.removeItem('usuarioParaEditar');
-  }  
+// Obter o índice do usuário a partir dos parâmetros de consulta
+var params = getQueryParams();    
+if (params.index) {
+  $('#btnCadastrar').hide();
+  $('#btnAtualizar').show();      
+
+  var user = JSON.parse(localStorage.getItem('usuarioParaEditar'));
+  // Preenche o formulário com os dados do usuário
+  $('#nome').val(user.nome);
+  $('#cpf').val(user.cpf);
+  $('#email').val(user.email);
+  $('#cep').val(user.cep);
+  $('#rua').val(user.rua);
+  $('#numero').val(user.numero);
+  $('#complemento').val(user.complemento);
+  $('#cidade').val(user.cidade);
+  $('#estado').val(user.estado);
   
-  $('#btnAtualizar').click(function() {  
-    console.log("params.index", params.index)
-    excluirUsuario(params.index);
-    atualizaUsuario();    
-  });    
-});  
+  // Limpa o localStorage
+  localStorage.removeItem('usuarioParaEditar');
+}
+
+/*
+  --------------------------------------------------------------------------------------
+  Ações dos Botões
+  --------------------------------------------------------------------------------------
+*/
+
+$('#btnAtualizar').click(function() {      
+  excluirUsuario(params.index);
+  atualizaUsuario();    
+});   
 
 $('#btnCadastrar').click(function() {
   adiconaUsuario();
@@ -41,34 +49,57 @@ $('#btnVerUsuarios').click(function() {
     window.location.href = 'usuarios.html';
 });
 
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para obter os dados do CEP, via requisição GET
+  --------------------------------------------------------------------------------------
+*/
+
 $('#cep').on('blur', function() {
-    var cep = $(this).val().replace(/\D/g, '');
+  const cep = $(this).val().replace(/\D/g, '');
+  const url = `https://viacep.com.br/ws/${cep}/json/?callback=?`;
 
-    if (cep != "") {
-      var validacep = /^[0-9]{8}$/;
+  if (cep) {
+    const validacep = /^[0-9]{8}$/;
 
-      if(validacep.test(cep)) {
-        $.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?", function(dados) {
-
-          if (!("erro" in dados)) {
-            $("#rua").val(dados.logradouro);
-            $("#cidade").val(dados.localidade);
-            $("#estado").val(dados.uf);
-          } else {
-            Swal.fire({
-              icon: "Error",
-              title: "CEP não encontrado.",                
-            });              
-          }
-        });
-      } else {
-        Swal.fire({
-          icon: "warning",
-          title: "Formato de CEP inválido.",                
-        });          
-      }
+    if (validacep.test(cep)) {
+      buscarDadosCep(url);
+    } else {
+      mostrarAlerta("warning", "Formato de CEP inválido.");
     }
-});  
+  }
+});
+
+function buscarDadosCep(url) {
+  $.getJSON(url, function(dados) {
+    if (!("erro" in dados)) {
+      preencherCamposEndereco(dados);
+    } else {
+      mostrarAlerta("error", "CEP não encontrado.");
+    }
+  });
+}
+
+function preencherCamposEndereco(dados) {
+  $("#rua").val(dados.logradouro);
+  $("#cidade").val(dados.localidade);
+  $("#estado").val(dados.uf);
+}
+
+function mostrarAlerta(icon, title) {
+  Swal.fire({
+    icon: icon,
+    title: title,
+  });
+}
+
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para adicionar novo usuário, via requisição POST
+  --------------------------------------------------------------------------------------
+*/
 
 function adiconaUsuario(){
   // Captura os valores do formulário
@@ -97,10 +128,16 @@ function adiconaUsuario(){
   else{
     Swal.fire({
       icon: "warning",
-      title: "Por favor, digite um CEP.",                       
+      title: "Por favor, preencher todos os campos.",                       
     });  
   }   
 }
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para atualizar os dados do usuário, via requisição PUT
+  --------------------------------------------------------------------------------------
+*/
 
 function atualizaUsuario(){
   // Captura os valores do formulário
@@ -129,10 +166,16 @@ function atualizaUsuario(){
   else{
     Swal.fire({
       icon: "warning",
-      title: "Por favor, digite um CEP.",                       
+      title: "Por favor, preencher todos os campos.",                       
     });  
   }   
 }
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para excluir usuário em edição do Local Storage
+  --------------------------------------------------------------------------------------
+*/
 
 function excluirUsuario(index){
   var users = JSON.parse(localStorage.getItem('users')) || [];
@@ -142,6 +185,13 @@ function excluirUsuario(index){
   // Atualizar localStorage
   localStorage.setItem('users', JSON.stringify(users));
 }
+
+/*
+  --------------------------------------------------------------------------------------
+  Função validar os campos preenchidos
+  --------------------------------------------------------------------------------------
+*/
+
 
 function validarCamposExcetoComplemento(formData) {
   let todosPreenchidos = true;
@@ -153,6 +203,12 @@ function validarCamposExcetoComplemento(formData) {
   });
   return todosPreenchidos;
 }
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para obter o parâmetro enviado via URL para editar os dados do usuário
+  --------------------------------------------------------------------------------------
+*/
 
 function getQueryParams() {
   var params = {};

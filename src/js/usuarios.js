@@ -21,6 +21,12 @@ users.forEach(function(user, index) {
     tableBody.append(row);
 });
 
+/*
+  --------------------------------------------------------------------------------------
+  Função de filtro
+  --------------------------------------------------------------------------------------
+*/
+
 function filtrarUsuarios() {
     const nomeFiltro = $('#nomeFiltro').val().toLowerCase();
     const cpfFiltro = $('#cpfFiltro').val();
@@ -36,6 +42,12 @@ function filtrarUsuarios() {
 $('#nomeFiltro').on('input', filtrarUsuarios);
 $('#cpfFiltro').on('input', filtrarUsuarios);
 
+/*
+  --------------------------------------------------------------------------------------
+  Função para redirecionar usuário para atualização dos dados
+  --------------------------------------------------------------------------------------
+*/
+
 function editarUsuario(index) {
     // Lógica para editar o usuário no índice fornecido
     var user = users[index];
@@ -49,6 +61,12 @@ function editarUsuario(index) {
 $('#btnVoltar').click(function() {
     window.location.href = 'index.html';
 });
+
+/*
+  --------------------------------------------------------------------------------------
+  Função para excluir usuário, via requisição DELETE
+  --------------------------------------------------------------------------------------
+*/
 
 function excluirUsuario(index) {    
     Swal.fire({
