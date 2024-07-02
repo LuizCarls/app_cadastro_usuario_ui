@@ -1,3 +1,8 @@
+$(document).ready(function(){  
+  $('#cpf').mask('000.000.000-00', {reverse: true});
+  $('#cep').mask('000000-000', {reverse: true});
+});
+
 /*
   --------------------------------------------------------------------------------------
   Função para preencher os campos que serão editados
@@ -49,7 +54,6 @@ $('#btnVerUsuarios').click(function() {
     window.location.href = 'usuarios.html';
 });
 
-
 /*
   --------------------------------------------------------------------------------------
   Função para obter os dados do CEP, via requisição GET
@@ -94,6 +98,40 @@ function mostrarAlerta(icon, title) {
   });
 }
 
+/*
+  --------------------------------------------------------------------------------------
+  Função para validar CPF informado
+  --------------------------------------------------------------------------------------
+*/
+
+$('#cpf').on('blur', function() {
+  const cpf = $('#cpf').val().replace(/\D/g, '');
+  if (validarCPF(cpf)) {
+      $('#cpf-error').text('');      
+  } else {
+    $('#btnAtualizar').prop('disabled', true);    
+    $('#btnCadastrar').prop('disabled', true);
+      $('#cpf-error').text('inválido.');
+  }  
+});
+
+function validarCPF(cpf) {
+  if (cpf.length !== 11 || /^(\d)\1*$/.test(cpf)) return false;
+
+  let soma = 0, resto;
+  for (let i = 1; i <= 9; i++) soma += parseInt(cpf[i-1]) * (11 - i);
+  resto = (soma * 10) % 11;
+  if (resto == 10 || resto == 11) resto = 0;
+  if (resto != parseInt(cpf[9])) return false;
+
+  soma = 0;
+  for (let i = 1; i <= 10; i++) soma += parseInt(cpf[i-1]) * (12 - i);
+  resto = (soma * 10) % 11;
+  if (resto == 10 || resto == 11) resto = 0;
+  if (resto != parseInt(cpf[10])) return false;
+
+  return true;
+}
 
 /*
   --------------------------------------------------------------------------------------
