@@ -58,7 +58,8 @@ h1 {
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 1.5em;
-    width: 280px;
+    width: 280px; /* Aumentei a largura dos cards */
+    min-height: 220px; /* Aumentei a altura mínima dos cards */
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
     color: #333; /* Cor do texto */
@@ -87,7 +88,7 @@ h1 {
 /* Descrição dos cards */
 .card p {
     font-size: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 2em;
     color: #666; /* Cor do texto */
 }
 
@@ -100,7 +101,7 @@ h1 {
     text-decoration: none;
     font-weight: 600;
     transition: background-color 0.3s, color 0.3s;
-    border: 2px solid #ff6600; /* Borda laranja para o botão */
+    border: 2px solid #ff6600; /* Borda laranja para o botão */    
 }
 
 /* Efeito de hover para o botão */
