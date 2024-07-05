@@ -1,29 +1,33 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tela incial</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/index.css">
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="..//css/index.css">
+    <!-- Adiciona o link para Font Awesome para usar ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div id="opcoesMenu">
-            <h4 class="text-center">Menu</h4>                        
-            <a href="../views/cadastro.html" class="nav-link">Cadastro de Usuário</a>
-            <a href="../views/usuarios.html" class="nav-link">Usuários Cadastrados</a>            
-        </div>        
-    </div>
-
-    <!-- Main Content -->
-    <div class="content" id="main-content">
-        <div id="inicio">
-            <h2>Início</h2>
-            <p>Bem-vindo ao sistema de Cadastro de usuário!</p>
+    <div class="container">
+        <header>
+            <h1>Cadastro de Usuário</h1>
+            <p class="description">Gerencie usuários de forma fácil e rápida.</p>
+        </header>
+        <div class="cards-container">
+            <div class="card">
+                <i class="fas fa-user-plus fa-3x"></i>
+                <h2>Cadastro</h2>
+                <p>Faça o cadastro de novos usuários no sistema.</p>
+                <a href="../views/cadastro.html" class="btn">Ir para Cadastro</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-users fa-3x"></i>
+                <h2>Usuários Cadastrados</h2>
+                <p>Visualize todos os usuários cadastrados no sistema.</p>
+                <a href="../views/usuarios.html" class="btn">Ver Usuários</a>
+            </div>
         </div>
-        <div id="conteudo"></div>
     </div>
 </body>
 </html>

@@ -1,58 +1,38 @@
-$(document).ready(function(){  
-  $('#cpf').mask('000.000.000-00', {reverse: true});
-  $('#cep').mask('000000-000', {reverse: true});
-});
+import URLS from "./config.js";
+import Validacao from "./validacao.js";
+
+// Inicialize a máscara dos campos
+Validacao.init();
 
 /*
   --------------------------------------------------------------------------------------
-  Função para preencher os campos que serão editados
+  Função para preencher os dados nos campos do formulário que serão editados
   --------------------------------------------------------------------------------------
 */
 
 // Obter o índice do usuário a partir dos parâmetros de consulta
-var params = getQueryParams();    
-if (params.index) {
+var params = getQueryParams();
+if (params.id) {
   $('#btnCadastrar').hide();
   $('#btnAtualizar').show();      
-
-  var user = JSON.parse(localStorage.getItem('usuarioParaEditar'));
-  // Preenche o formulário com os dados do usuário
-  $('#nome').val(user.nome);
-  $('#cpf').val(user.cpf);
-  $('#email').val(user.email);
-  $('#cep').val(user.cep);
-  $('#rua').val(user.rua);
-  $('#numero').val(user.numero);
-  $('#complemento').val(user.complemento);
-  $('#cidade').val(user.cidade);
-  $('#estado').val(user.estado);
-  
-  // Limpa o localStorage
-  localStorage.removeItem('usuarioParaEditar');
+  var id = params.id;
+  // Fazer a requisição para buscar os dados do usuário
+  $.ajax({
+    url: `${URLS.BUSCAR_USUARIO_POR_ID}?id=${encodeURIComponent(id)}`,    
+    type: 'GET',
+    success: function(response) {
+        // Preenche o formulário com os dados do usuário
+        preencheFormulario(response)
+    },
+    error: function(xhr, status, error) {
+        Swal.fire({
+            title: "Erro ao buscar usuário",
+            text: xhr.responseText,
+            icon: "error"
+        });
+    }
+  });
 }
-
-/*
-  --------------------------------------------------------------------------------------
-  Ações dos Botões
-  --------------------------------------------------------------------------------------
-*/
-
-$('#btnAtualizar').click(function() {      
-  excluirUsuario(params.index);
-  atualizaUsuario();    
-});   
-
-$('#btnCadastrar').click(function() {
-  adiconaUsuario();
-});
-
-$('#btnVoltar').click(function() {
-    window.location.href = 'index.html';
-});
-
-$('#btnVerUsuarios').click(function() {
-    window.location.href = 'usuarios.html';
-});
 
 /*
   --------------------------------------------------------------------------------------
@@ -62,75 +42,50 @@ $('#btnVerUsuarios').click(function() {
 
 $('#cep').on('blur', function() {
   const cep = $(this).val().replace(/\D/g, '');
-  const url = `https://viacep.com.br/ws/${cep}/json/?callback=?`;
+  const url = `https://viacep.com.br/ws/${cep}/json/`;
 
   if (cep) {
-    const validacep = /^[0-9]{8}$/;
+      const validacep = /^[0-9]{8}$/;
 
-    if (validacep.test(cep)) {
-      buscarDadosCep(url);
-    } else {
-      mostrarAlerta("warning", "Formato de CEP inválido.");
-    }
+      if (validacep.test(cep)) {
+          buscarDadosCep(url);
+      } else {
+          mostrarAlerta("warning", "Formato de CEP inválido.");
+      }
   }
 });
 
+// Função para buscar dados do CEP
 function buscarDadosCep(url) {
-  $.getJSON(url, function(dados) {
-    if (!("erro" in dados)) {
-      preencherCamposEndereco(dados);
-    } else {
-      mostrarAlerta("error", "CEP não encontrado.");
-    }
+  $.ajax({
+      url: url,
+      dataType: 'json',
+      success: function(dados) {
+          if (!("erro" in dados)) {
+              preencherCamposEndereco(dados);
+          } else {
+              mostrarAlerta("error", "CEP não encontrado.");
+          }
+      },
+      error: function() {
+          mostrarAlerta("error", "Erro ao buscar o CEP.");
+      }
   });
 }
 
+// Função para preencher campos de endereço
 function preencherCamposEndereco(dados) {
   $("#rua").val(dados.logradouro);
   $("#cidade").val(dados.localidade);
   $("#estado").val(dados.uf);
 }
 
+// Função para mostrar alertas
 function mostrarAlerta(icon, title) {
   Swal.fire({
-    icon: icon,
-    title: title,
+      icon: icon,
+      title: title,
   });
-}
-
-/*
-  --------------------------------------------------------------------------------------
-  Função para validar CPF informado
-  --------------------------------------------------------------------------------------
-*/
-
-$('#cpf').on('blur', function() {
-  const cpf = $('#cpf').val().replace(/\D/g, '');
-  if (validarCPF(cpf)) {
-      $('#cpf-error').text('');      
-  } else {
-    $('#btnAtualizar').prop('disabled', true);    
-    $('#btnCadastrar').prop('disabled', true);
-      $('#cpf-error').text('inválido.');
-  }  
-});
-
-function validarCPF(cpf) {
-  if (cpf.length !== 11 || /^(\d)\1*$/.test(cpf)) return false;
-
-  let soma = 0, resto;
-  for (let i = 1; i <= 9; i++) soma += parseInt(cpf[i-1]) * (11 - i);
-  resto = (soma * 10) % 11;
-  if (resto == 10 || resto == 11) resto = 0;
-  if (resto != parseInt(cpf[9])) return false;
-
-  soma = 0;
-  for (let i = 1; i <= 10; i++) soma += parseInt(cpf[i-1]) * (12 - i);
-  resto = (soma * 10) % 11;
-  if (resto == 10 || resto == 11) resto = 0;
-  if (resto != parseInt(cpf[10])) return false;
-
-  return true;
 }
 
 /*
@@ -139,36 +94,43 @@ function validarCPF(cpf) {
   --------------------------------------------------------------------------------------
 */
 
-function adiconaUsuario(){
-  // Captura os valores do formulário
-  var formData = $('#formCadastro').serializeArray(); 
-  console.log("formData", formData)       
-  var user = {};
-  formData.forEach(function(item) {            
-      user[item.name] = item.value;
-  });         
-  
-  if(validarCamposExcetoComplemento(formData)){
-    // Salva o usuário no localStorage
-    var users = JSON.parse(localStorage.getItem('users')) || [];
-    users.push(user);
-    localStorage.setItem('users', JSON.stringify(users));
+window.adiconaUsuario = function () {   
+  if (Validacao.validarCamposExcetoComplemento()) {
+    var formData = obtemFormData();        
+    $.ajax({
+        url: URLS.ADICIONA_USUARIO,          
+        method: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            Swal.fire({
+                title: "Cadastro realizado com sucesso!",
+                icon: "success"
+            });
 
-    Swal.fire({
-      title: "Cadastro realizado com sucesso!",            
-      icon: "success"
+            // Limpa o formulário
+            $('#formCadastro')[0].reset();
+        },
+        error: function(jqXHR) {
+            var errorMsg = "Erro ao cadastrar usuário";
+            if (jqXHR.status === 409) {
+                errorMsg = "Usuário de mesmo CPF já salvo na base :/";
+            } else if (jqXHR.status === 400) {
+                errorMsg = "Não foi possível salvar novo usuário :/";
+            }
+            Swal.fire({
+                icon: "error",
+                title: errorMsg
+            });
+        }
     });
-
-    //alert('Usuário cadastrado com sucesso!');
-    $('#formCadastro')[0].reset(); // Limpa o formulário
-
+  } else {
+      Swal.fire({
+          icon: "warning",
+          title: "Por favor, preencher todos os campos."
+      });
   }
-  else{
-    Swal.fire({
-      icon: "warning",
-      title: "Por favor, preencher todos os campos.",                       
-    });  
-  }   
 }
 
 /*
@@ -177,69 +139,38 @@ function adiconaUsuario(){
   --------------------------------------------------------------------------------------
 */
 
-function atualizaUsuario(){
-  // Captura os valores do formulário
-  var formData = $('#formCadastro').serializeArray(); 
-  console.log("formData", formData)       
-  var user = {};
-  formData.forEach(function(item) {            
-      user[item.name] = item.value;
-  });         
-  
-  if(validarCamposExcetoComplemento(formData)){
-    // Salva o usuário no localStorage
-    var users = JSON.parse(localStorage.getItem('users')) || [];
-    users.push(user);
-    localStorage.setItem('users', JSON.stringify(users));
+window.atualizaUsuario = function () {  
+  if (Validacao.validarCamposExcetoComplemento()) {
+    var formData = obtemFormData();     
+    formData.append('id', params.id);
+    $.ajax({
+        url: URLS.ATUALIZAR_USUARIO,
+        method: 'PUT',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {              
+            Swal.fire({
+                title: "Cadastro atualizado com sucesso!",
+                icon: "success"
+            });
 
-    Swal.fire({
-      title: "Cadastro atualizado com sucesso!",            
-      icon: "success"
+            limparFormulario();
+        },
+        error: function (xhr, status, error) {              
+            Swal.fire({
+                icon: "error",
+                title: "Erro ao atualizar o cadastro.",
+                text: xhr.responseJSON ? xhr.responseJSON.detail : error
+            });
+        }
     });
-
-    //alert('Usuário cadastrado com sucesso!');
-    $('#formCadastro')[0].reset(); // Limpa o formulário
-
+  } else {      
+      Swal.fire({
+          icon: "warning",
+          title: "Por favor, preencher todos os campos."
+      });
   }
-  else{
-    Swal.fire({
-      icon: "warning",
-      title: "Por favor, preencher todos os campos.",                       
-    });  
-  }   
-}
-
-/*
-  --------------------------------------------------------------------------------------
-  Função para excluir usuário em edição do Local Storage
-  --------------------------------------------------------------------------------------
-*/
-
-function excluirUsuario(index){
-  var users = JSON.parse(localStorage.getItem('users')) || [];
-  // Remover usuário do array pelo índice
-  users.splice(index, 1);
-
-  // Atualizar localStorage
-  localStorage.setItem('users', JSON.stringify(users));
-}
-
-/*
-  --------------------------------------------------------------------------------------
-  Função validar os campos preenchidos
-  --------------------------------------------------------------------------------------
-*/
-
-
-function validarCamposExcetoComplemento(formData) {
-  let todosPreenchidos = true;
-  $.each(formData, function(index, item) {      
-      if (item.name !== 'complemento' && item.value.trim() === '') {
-          todosPreenchidos = false;
-          return false;
-      }
-  });
-  return todosPreenchidos;
 }
 
 /*
@@ -255,4 +186,35 @@ function getQueryParams() {
       params[parts[0]] = decodeURIComponent(parts[1]);
   });
   return params;
+}
+
+function preencheFormulario(usuario){
+  $('#nome').val(usuario.nome);
+  $('#cpf').val(usuario.cpf);
+  $('#email').val(usuario.email);
+  $('#cep').val(usuario.cep);
+  $('#rua').val(usuario.rua);
+  $('#numero').val(usuario.numero);
+  $('#complemento').val(usuario.complemento);
+  $('#cidade').val(usuario.cidade);
+  $('#estado').val(usuario.estado);
+}
+
+
+function obtemFormData() {  
+  const formData = new FormData(document.getElementById('formCadastro'));
+
+  // Adiciona um valor para o campo 'complemento' se não estiver presente
+  if (!formData.has('complemento')) {
+      formData.append('complemento', '');
+  }
+
+  return formData;
+}
+
+
+function limparFormulario() {
+  $('#formCadastro').find('input:text, input:password, input:file, textarea, select').val('');
+  $('#formCadastro').find('input:radio, input:checkbox').prop('checked', false);
+  $('#formCadastro').find('select').prop('selectedIndex', 0);
 }

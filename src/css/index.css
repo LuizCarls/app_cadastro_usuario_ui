@@ -1,52 +1,114 @@
+/* Estilização geral da página */
 body {
-    display: flex;
-    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f7f7f7; /* Cor de fundo clara */
+    color: #333;
     margin: 0;
-}
-.sidebar {
-    width: 250px;
-    background: #343a40;
-    color: #fff;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    padding-top: 20px;
-    transition: width 0.3s, padding 0.3s;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
-.sidebar.collapsed {
-    width: 80px;
-    padding-top: 0;
-}
-.sidebar a {
-    color: #fff;
-    text-decoration: none;
-    padding: 10px;
-    display: block;
-    white-space: nowrap;
-    transition: opacity 0.3s;
-}
-.sidebar h4 {
+
+/* Container principal */
+.container {
     text-align: center;
-    transition: opacity 0.3s;
+    max-width: 800px;
+    margin: 20px;
+    padding: 2em;
+    background-color: #ffffff; /* Cor branca para o fundo dos cards */
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-.sidebar.collapsed h4,
-.sidebar.collapsed a {
-    opacity: 0;
+
+/* Cabeçalho */
+header {
+    margin-bottom: 2em;
 }
-.sidebar a:hover {
-    background: #495057;
+
+/* Título */
+h1 {
+    font-size: 2.8em;
+    margin-bottom: 0.5em;
+    color: #ff6600; /* Cor laranja */
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Sombra do texto */
 }
-.content {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
+
+/* Descrição do título */
+.description {
+    font-size: 1.2em;
+    color: #666; /* Texto em cinza mais escuro */
+    margin-bottom: 2em;
 }
-.toggle-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #343a40;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
+
+/* Container dos cards */
+.cards-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+    flex-wrap: wrap;
+}
+
+/* Estilização dos cards */
+.card {
+    background: #fff; /* Cor de fundo branca */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 1.5em;
+    width: 280px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    color: #333; /* Cor do texto */
+    border: 2px solid #ff6600; /* Borda laranja */
+}
+
+/* Efeito de hover para os cards */
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Ícones dos cards */
+.card i {
+    color: #ff6600;    
+}
+
+/* Título dos cards */
+.card h2 {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+    color: #333; /* Cor escura para o título */
+    font-weight: 600;
+}
+
+/* Descrição dos cards */
+.card p {
+    font-size: 1em;
+    margin-bottom: 1em;
+    color: #666; /* Cor do texto */
+}
+
+/* Botões dos cards */
+.card .btn {
+    background-color: #ff6600; /* Cor laranja para o botão */
+    color: #fff; /* Cor do texto */
+    padding: 0.75em 1.5em;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+    border: 2px solid #ff6600; /* Borda laranja para o botão */
+}
+
+/* Efeito de hover para o botão */
+.card .btn:hover {
+    background-color: #e55a00; /* Cor laranja mais escura */
+    color: #fff; /* Cor do texto */
+}
+
+.card .btn:focus {
+    outline: none;
 }
