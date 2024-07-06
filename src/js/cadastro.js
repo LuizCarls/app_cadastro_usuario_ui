@@ -154,8 +154,8 @@ window.atualizaUsuario = function () {
                 title: "Cadastro atualizado com sucesso!",
                 icon: "success"
             });
-
-            limparFormulario();
+            
+            limparFormulario();          
         },
         error: function (xhr, status, error) {              
             Swal.fire({
