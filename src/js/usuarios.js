@@ -167,14 +167,14 @@ function adicionarUsuarioNaTabela(usuario) {
     $('#usuariosTableBody').append(`
         <tr>
             <td class="nome-column">${usuario.nome}</td>
-            <td>${usuario.cpf}</td>
+            <td>${mascararCPF(usuario.cpf)}</td>
             <td class="email-column">${usuario.email}</td>
             <td>${usuario.rua}</td>
             <td>${usuario.numero}</td>
             <td>${usuario.complemento}</td>
             <td>${usuario.cidade}</td>
             <td>${usuario.estado}</td>
-            <td>${usuario.cep}</td>
+            <td>${mascararCEP(usuario.cep)}</td>
             <td>                
                 <button class="btn btn-sm btn-edit" style="color:#ffffff;background:#ff6600" onclick="window.location.href='../views/cadastro.html?id=${usuario.id}'"><i class="fas fa-edit"></i> Editar</button>
                 <button class="btn btn-danger btn-sm btn-delete" onclick="excluirUsuario(${usuario.id})"><i class="fas fa-trash"></i> Excluir</button>
@@ -193,4 +193,13 @@ function adicionarUsuarioNaTabela(usuario) {
 
 function limparTabelaUsuarios() {
     $('#usuariosTableBody').empty();
+}
+
+function mascararCPF(cpf) {    
+    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
+function mascararCEP(cep) {   
+    console.log("te amo, bb Raiane", cep) 
+    return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
 }

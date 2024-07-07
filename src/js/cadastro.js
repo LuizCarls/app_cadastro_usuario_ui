@@ -94,9 +94,14 @@ function mostrarAlerta(icon, title) {
   --------------------------------------------------------------------------------------
 */
 
-window.adiconaUsuario = function () {   
+window.adiconaUsuario = function () {
   if (Validacao.validarCamposExcetoComplemento()) {
-    var formData = obtemFormData();        
+    var formData = obtemFormData();
+
+    console.log("formData", formData)
+
+
+
     $.ajax({
         url: URLS.ADICIONA_USUARIO,          
         method: 'POST',
@@ -201,8 +206,16 @@ function preencheFormulario(usuario){
 }
 
 
-function obtemFormData() {  
-  const formData = new FormData(document.getElementById('formCadastro'));
+function obtemFormData() {
+  const form = document.getElementById('formCadastro');
+  const formData = new FormData(form);
+
+  ['cpf', 'cep'].forEach(campo => {
+      const valor = formData.get(campo);
+      if (valor) {
+          formData.set(campo, removeMascara(valor));
+      }
+  });
 
   // Adiciona um valor para o campo 'complemento' se não estiver presente
   if (!formData.has('complemento')) {
@@ -212,6 +225,9 @@ function obtemFormData() {
   return formData;
 }
 
+function removeMascara(valor) {
+  return valor.replace(/\D/g, '');
+}
 
 function limparFormulario() {
   $('#formCadastro').find('input:text, input:password, input:file, textarea, select').val('');
