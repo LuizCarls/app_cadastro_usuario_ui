@@ -176,7 +176,7 @@ function adicionarUsuarioNaTabela(usuario) {
             <td>${usuario.estado}</td>
             <td>${mascararCEP(usuario.cep)}</td>
             <td>                
-                <button class="btn btn-sm btn-edit" style="color:#ffffff;background:#ff6600" onclick="window.location.href='../views/cadastro.html?id=${usuario.id}'"><i class="fas fa-edit"></i> Editar</button>
+                <button class="btn btn-sm btn-edit" style="color:#ffffff;background:#ff6600" onclick="window.location.href='../app/cadastro.html?id=${usuario.id}'"><i class="fas fa-edit"></i> Editar</button>
                 <button class="btn btn-danger btn-sm btn-delete" onclick="excluirUsuario(${usuario.id})"><i class="fas fa-trash"></i> Excluir</button>
             </td>
         </tr>
